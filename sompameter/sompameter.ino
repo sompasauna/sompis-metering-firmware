@@ -38,6 +38,9 @@ void setup() {
   sensorATH20 *outsideTempAndHumidity = new sensorATH20();
   SensorBuilder.addSensor(outsideTempAndHumidity);
 
+  sensorMCP9600 *saunaStonesTemp = new sensorMCP9600();
+  SensorBuilder.addSensor(saunaStonesTemp);
+
   // if need to broadcast
   SensorBuilder.addSensor(&outsideLightLevel);
 
@@ -47,6 +50,7 @@ void setup() {
 
 void loop() {
   SensorBuilder.poll();
+  // TODO: buffer measurements for 5min and return averages(?)
 
   // TODO: toggle lights on/off by light level
   //float lux = outsideLightLevel.directRead();
