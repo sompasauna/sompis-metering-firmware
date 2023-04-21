@@ -22,6 +22,8 @@
 
 SensorBuilderClass SensorBuilder;
 
+sensorBH1750 outsideLightLevel;
+
 void setup() {
   Serial.begin(9600);
   SensorBuilder.check_grove();
@@ -36,10 +38,17 @@ void setup() {
   sensorATH20 *outsideTempAndHumidity = new sensorATH20();
   SensorBuilder.addSensor(outsideTempAndHumidity);
 
+  // if need to broadcast
+  SensorBuilder.addSensor(&outsideLightLevel);
+
   SensorBuilder.begin();
 
 }
 
 void loop() {
   SensorBuilder.poll();
+
+  // TODO: toggle lights on/off by light level
+  //float lux = outsideLightLevel.directRead();
+
 }
