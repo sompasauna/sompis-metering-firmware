@@ -27,9 +27,12 @@ void setup() {
   SensorBuilder.check_grove();
  
   /* sensor list */
-  sensorDummy *dummysensor = new sensorDummy();
-  SensorBuilder.addSensor(dummysensor);
+  sensorDummy *dummySensor = new sensorDummy();
+  SensorBuilder.addSensor(dummySensor);
   
+  sensorSHT3X *saunaTempAndHumidity = new sensorSHT3X();
+  SensorBuilder.addSensor(saunaTempAndHumidity);
+
   SensorBuilder.begin();
 
 }
