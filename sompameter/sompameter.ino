@@ -33,6 +33,9 @@ void setup() {
   sensorSHT3X *saunaTempAndHumidity = new sensorSHT3X();
   SensorBuilder.addSensor(saunaTempAndHumidity);
 
+  sensorATH20 *outsideTempAndHumidity = new sensorATH20();
+  SensorBuilder.addSensor(outsideTempAndHumidity);
+
   SensorBuilder.begin();
 
 }

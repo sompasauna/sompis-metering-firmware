@@ -8,6 +8,7 @@
 
 #include "sensor/sensorDummy.hpp"
 #include "sensor/sensorSHT3X.hpp"
+#include "sensor/sensorATH20.hpp"
 
 #define SENSOR_BUILDER_DEF_BAUD 9600
 #define SENSOR_BUILDER_DEF_SLAVE 1
