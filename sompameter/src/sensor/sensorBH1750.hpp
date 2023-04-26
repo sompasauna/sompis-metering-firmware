@@ -22,7 +22,7 @@ public:
 
     enum
     {
-        LUX = 0x00, 
+        LUX = 0x00,
         MAX
     };
 
@@ -39,6 +39,7 @@ uint16_t sensorBH1750::init(uint16_t reg, bool i2c_available)
         sensorClass::reg_t value;
         value.addr = t_reg;
         value.type = sensorClass::regType_t::REG_TYPE_S32_ABCD;
+        value.truncated = sensorClass::truncatedType_t::TRUNCATED_16;
         value.value.s32 = 0;
         m_valueVector.emplace_back(value);
         t_reg += sensorClass::valueLength(value.type);
@@ -79,7 +80,7 @@ bool sensorBH1750::sample()
     float lux = bh1750->readLightLevel();
 
     if (isnan(lux)) {
-	return false;
+        return false;
     }
 
     m_valueVector[LUX].value.s32 = lux * SCALE;

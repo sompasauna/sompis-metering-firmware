@@ -24,8 +24,8 @@ public:
     {
         HOTJUNCTION = 0x00, // C
         COLDJUNCTION = 0x01, // C
-	// probably not interesting to transmit
-	// ADC = 0x02, // uV
+        // probably not interesting to transmit
+        // ADC = 0x02, // uV
         MAX
     };
 
@@ -42,6 +42,7 @@ uint16_t sensorMCP9600::init(uint16_t reg, bool i2c_available)
         sensorClass::reg_t value;
         value.addr = t_reg;
         value.type = sensorClass::regType_t::REG_TYPE_S32_ABCD;
+        value.truncated = sensorClass::truncatedType_t::TRUNCATED_16;
         value.value.s32 = 0;
         m_valueVector.emplace_back(value);
         t_reg += sensorClass::valueLength(value.type);
@@ -86,7 +87,7 @@ bool sensorMCP9600::sample()
     int32_t adc = mcp->readADC();
 
     if (isnan(hotJunction) or isnan(coldJunction)) {
-	return false;
+        return false;
     }
 
     m_valueVector[HOTJUNCTION].value.s32 = hotJunction * SCALE;

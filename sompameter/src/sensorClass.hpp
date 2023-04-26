@@ -39,10 +39,18 @@ public:
         REG_TYPE_S32_CDAB,
     } regType_t;
 
+    typedef enum
+    {
+
+        TRUNCATED_8 = 0,
+        TRUNCATED_16,
+    } truncatedType_t;
+
     typedef struct
     {
         uint16_t addr;
         regType_t type;
+        truncatedType_t truncated;
         union
         {
             uint16_t u16;

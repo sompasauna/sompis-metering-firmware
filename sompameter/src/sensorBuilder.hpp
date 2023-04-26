@@ -44,8 +44,10 @@ public:
     void check_grove(void);
     bool begin(uint8_t slave = SENSOR_BUILDER_DEF_SLAVE, uint32_t baudrate = SENSOR_BUILDER_DEF_BAUD);
     int poll();
+	int truncatedPoll();
     uint16_t size();
 };
+
 
 void SensorBuilderClass::check_grove()
 {
@@ -106,6 +108,80 @@ bool SensorBuilderClass::begin(uint8_t slave, uint32_t baudrate)
     }
 
     return true;
+}
+
+int SensorBuilderClass::truncatedPoll()
+{
+    // we want to pack measurements to have less needed bandwith
+    // registers are readed as uint32_abcd registers
+    // actual decoding is done in backed
+    int8_t b8_value;
+    int16_t b16_value;
+    int reg = 4;
+    uint16_t packed_value;
+    int bi = 0;
+
+    for (auto iter = m_sensorMap.begin(); iter != m_sensorMap.end(); ++iter)
+    {
+        sensorClass *sensor = (sensorClass *)iter->second;
+
+        if (!sensor->connected())
+        {
+            continue;
+        }
+
+        sensor->sample();
+
+        auto m_measureValue = sensor->getMeasureValue();
+        for (auto m_iter = m_measureValue.begin(); m_iter != m_measureValue.end(); ++m_iter)
+        {
+
+            Serial.print(sensor->name().c_str());
+            Serial.print(" - ");
+            Serial.println(m_iter->value.s32);
+            // NOTE: our current sensors return single type s32 no need to implement other yet
+            // NOTE: items must be in pairs do not put 3 b8 items in row
+            switch (m_iter->truncated)
+            {
+                case sensorClass::truncatedType_t::TRUNCATED_8:
+                    b8_value = (int8_t)m_iter->value.s32;
+                    packed_value += b8_value << bi * 8;
+                    bi += 1;
+                    break;
+                case sensorClass::truncatedType_t::TRUNCATED_16:
+                    b16_value = (int16_t)m_iter->value.s32;
+                    packed_value += b8_value << bi * 8;
+                    bi += 2;
+                    break;
+            }
+            if (bi >= 2)
+            {
+                Serial.print(reg);
+                Serial.print(" : ");
+                Serial.println(packed_value);
+
+                ModbusRTUServer.inputRegisterWrite(reg, packed_value);
+                ModbusRTUServer.holdingRegisterWrite(reg, packed_value);
+                bi = 0;
+                packed_value = 0;
+                reg += 1;
+            }
+        }
+    }
+    if (packed_value != 0)
+    {
+        Serial.print(reg);
+        Serial.print(" -: ");
+        Serial.println(packed_value);
+
+        ModbusRTUServer.inputRegisterWrite(reg, packed_value);
+        ModbusRTUServer.holdingRegisterWrite(reg, packed_value);
+        bi = 0;
+        packed_value = 0;
+        reg += 1;
+    }
+
+    return ModbusRTUServer.poll();
 }
 
 int SensorBuilderClass::poll()
