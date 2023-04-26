@@ -23,7 +23,7 @@ public:
     enum
     {
         HOTJUNCTION = 0x00, // C
-        COLDJUNCTION = 0x01, // C
+        // COLDJUNCTION = 0x01, // C
         // probably not interesting to transmit
         // ADC = 0x02, // uV
         MAX
@@ -91,7 +91,7 @@ bool sensorMCP9600::sample()
     }
 
     m_valueVector[HOTJUNCTION].value.s32 = hotJunction * SCALE;
-    m_valueVector[COLDJUNCTION].value.s32 = coldJunction * SCALE;
+    // m_valueVector[COLDJUNCTION].value.s32 = coldJunction * SCALE;
 
     return true;
 }
