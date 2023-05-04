@@ -5,7 +5,7 @@
 #include <Adafruit_MCP9600.h>
 #include <Wire.h>
 
-#define SENSOR_MCP9600_I2C_ADDR 0x67
+#define SENSOR_MCP9600_I2C_ADDR 0x66
 
 class sensorMCP9600 : public sensorClass
 {
